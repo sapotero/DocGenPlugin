@@ -1,0 +1,59 @@
+<idea-plugin>
+    <id>docs.gen.helper</id>
+    <name>KDocGen</name>
+    <vendor>Egor Sapozhnikov</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java-capable</depends>
+    <depends>org.jetbrains.kotlin</depends>
+
+    <resource-bundle>messages.TextBundle</resource-bundle>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!--        <toolWindow-->
+        <!--                factoryClass="docs.gen.factory.DocGenWindowFactory" id="DocGenToolWindow"-->
+        <!--        />-->
+
+        <applicationConfigurable instance="docs.gen.settings.ConfigurablePluginSettings"
+                                 displayName="DocGen Settings"
+                                 id="docs.gen.settings.ConfigurablePluginSettings"/>
+    </extensions>
+
+    <actions>
+        <action
+                id="org.intellij.sdk.action.DescribeMethodDialogAction"
+                class="docs.gen.actions.DescribeMethodDialogAction"
+                text="Generate function docs"
+                description="Generate comment of function">
+            <add-to-group group-id="GenerateGroup" anchor="last"/>
+        </action>
+
+        <action
+                id="org.intellij.sdk.action.DescribeSelectionDialogAction"
+                class="docs.gen.actions.DescribeSelectionDialogAction"
+                text="Describe code fragment"
+                description="Generate comment of selected code fragment">
+            <add-to-group group-id="GenerateGroup"
+                          relative-to-action="org.intellij.sdk.action.DescribeMethodDialogAction" anchor="after"/>
+        </action>
+
+
+        <action
+                id="org.intellij.sdk.action.ImplementMissingCodeInSelectionDialogAction"
+                class="docs.gen.actions.ImplementMissingCodeInSelectionDialogAction"
+                text="Generate IMPL code"
+                description="Generate missing code fragment">
+            <add-to-group group-id="GenerateGroup"
+                          relative-to-action="org.intellij.sdk.action.DescribeSelectionDialogAction" anchor="after"/>
+        </action>
+
+
+        DescribeSelectionDialogAction
+    </actions>
+
+
+    <applicationListeners>
+        <listener class="docs.gen.listener.DocActivationListener"
+                  topic="com.intellij.openapi.application.ApplicationActivationListener"/>
+    </applicationListeners>
+</idea-plugin>
