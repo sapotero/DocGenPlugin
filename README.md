@@ -1,7 +1,6 @@
 <!-- Plugin description -->
-# KDocGen: Code & Documentation Generator
+KDocGen: Code & Documentation Generator
 
-![Plugin Icon](./src/main/resources/META-INF/pluginIcon.svg)
 
 ## 🛠️ Overview
 KDocGen is an IntelliJ IDEA plugin that automates **code implementation generation**
@@ -16,7 +15,17 @@ KDocGen helps generate structured code and well-formatted documentation, improvi
 method stubs and function bodies.
 - 🔹 **Seamless integration**: Works effortlessly within IntelliJ IDEA using a single shortcut.
 
+## 🛠️ Installation
+1. Open **IntelliJ IDEA**.
+2. Go to **Plugins** → **Marketplace**.
+3. Search for **KDocGen**.
+4. Click **Install**.
+5. Go to **Settings** → **KDocGen Settings** and enter your OpenAI API key.
+6. Click **Save**, and you're ready to go!
+
 ## 🚀 Usage
+
+#### ⚠️ ️Before you start, make sure that you have an `OpenAI API Token` ⚠️
 
 ### **Generating a comment for selected code (or text)**
 1. **Select a piece of code** (e.g., a function or class).
@@ -33,14 +42,6 @@ method stubs and function bodies.
 2. **Press** [`⌘ + N`]  (on macOS).
 3. The plugin will **generate and insert the corresponding code block**.
 
-## 🛠️ Installation
-1. Open **IntelliJ IDEA**.
-2. Go to **Plugins** → **Marketplace**.
-3. Search for **KDocGen**.
-4. Click **Install**.
-5. Go to **Settings** → **KDocGen Settings** and enter your OpenAI API key.
-6. Click **Save**, and you're ready to go!
-
 ## ⚡ Shortcut
 | Action | Shortcut (macOS) |  
 |--------|------------------|  
@@ -49,6 +50,9 @@ method stubs and function bodies.
 ## 📌 Future Enhancements
 - 🔹 Improved AI-based documentation generation.
 - 🔹 Support for additional languages (Kotlin, Java).
+
+---
+### If you want to support author, or have an idea - welcome to [boosty](https://boosty.to/sapotero/donate)
 
 ---
 

@@ -1,22 +1,24 @@
-<idea-plugin>
+<idea-plugin allow-unload-without-restart="true">
     <id>docs.gen.helper</id>
     <name>KDocGen</name>
     <vendor>Egor Sapozhnikov</vendor>
 
+    <depends>com.intellij.modules.java</depends>
     <depends>com.intellij.modules.platform</depends>
-    <depends>com.intellij.modules.java-capable</depends>
     <depends>org.jetbrains.kotlin</depends>
 
     <resource-bundle>messages.TextBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!--        <toolWindow-->
-        <!--                factoryClass="docs.gen.factory.DocGenWindowFactory" id="DocGenToolWindow"-->
-        <!--        />-->
-
         <applicationConfigurable instance="docs.gen.settings.ConfigurablePluginSettings"
                                  displayName="DocGen Settings"
                                  id="docs.gen.settings.ConfigurablePluginSettings"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <org.jetbrains.kotlin.supportsKotlinPluginMode>
+            <mode>api</mode>
+        </org.jetbrains.kotlin.supportsKotlinPluginMode>
     </extensions>
 
     <actions>
@@ -27,7 +29,6 @@
                 description="Generate comment of function">
             <add-to-group group-id="GenerateGroup" anchor="last"/>
         </action>
-
         <action
                 id="org.intellij.sdk.action.DescribeSelectionDialogAction"
                 class="docs.gen.actions.DescribeSelectionDialogAction"
@@ -36,8 +37,6 @@
             <add-to-group group-id="GenerateGroup"
                           relative-to-action="org.intellij.sdk.action.DescribeMethodDialogAction" anchor="after"/>
         </action>
-
-
         <action
                 id="org.intellij.sdk.action.ImplementMissingCodeInSelectionDialogAction"
                 class="docs.gen.actions.ImplementMissingCodeInSelectionDialogAction"
@@ -46,9 +45,6 @@
             <add-to-group group-id="GenerateGroup"
                           relative-to-action="org.intellij.sdk.action.DescribeSelectionDialogAction" anchor="after"/>
         </action>
-
-
-        DescribeSelectionDialogAction
     </actions>
 
 
