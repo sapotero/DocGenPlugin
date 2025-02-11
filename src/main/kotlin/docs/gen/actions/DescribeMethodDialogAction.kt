@@ -14,20 +14,17 @@ import com.intellij.openapi.util.Computable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementFactory
 import com.intellij.psi.util.elementType
-import docs.gen.service.OpenAiService
+import docs.gen.service.GPTService
 
-/**
- * test
-* */
 class DescribeMethodDialogAction : AnAction() {
+    private val gptService = service<GPTService>()
+    
     override fun update(event: AnActionEvent) {
         val selectedElement = event.getData(CommonDataKeys.NAVIGATABLE)
         val isVisible = selectedElement is PsiElement && (
             selectedElement.elementType.toString() in listOf("METHOD", "FUN"))
         event.presentation.isEnabledAndVisible = isVisible
     }
-    
-    private val openAIService = service<OpenAiService>()
     
     override fun actionPerformed(event: AnActionEvent) {
         val currentProject = event.project ?: return
@@ -40,7 +37,7 @@ class DescribeMethodDialogAction : AnAction() {
                     val functionText =
                         ApplicationManager.getApplication().runReadAction(Computable { selectedElement.text })
                     
-                    val documentation = openAIService.describeFunction(functionText).toString()
+                    val documentation = gptService.describeFunction(functionText).toString()
                     
                     ApplicationManager.getApplication().invokeLater {
                         WriteCommandAction.runWriteCommandAction(project) {

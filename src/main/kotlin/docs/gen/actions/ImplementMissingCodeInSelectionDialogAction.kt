@@ -12,13 +12,11 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Computable
-import docs.gen.service.OpenAiService
+import docs.gen.service.GPTService
 
-
-/**
- * test
- * */
 class ImplementMissingCodeInSelectionDialogAction : AnAction() {
+    private val gptService = service<GPTService>()
+
     override fun update(event: AnActionEvent) {
         val editor = event.getRequiredData(CommonDataKeys.EDITOR)
         val selectionModel: SelectionModel = editor.selectionModel
@@ -26,8 +24,6 @@ class ImplementMissingCodeInSelectionDialogAction : AnAction() {
             selectionModel.hasSelection()
                 && selectionModel.selectedText.toString().contains("IMPL")
     }
-    
-    private val openAIService = service<OpenAiService>()
     
     override fun actionPerformed(event: AnActionEvent) {
         val currentProject = event.project ?: return
@@ -44,7 +40,7 @@ class ImplementMissingCodeInSelectionDialogAction : AnAction() {
                     val codeBlock =
                         ApplicationManager.getApplication().runReadAction(Computable { selectionModel.selectedText.toString() })
                     
-                    val code = openAIService.generateCode(codeBlock).toString()
+                    val code = gptService.generateCode(codeBlock).toString()
                     
                     ApplicationManager.getApplication().invokeLater {
                         WriteCommandAction.runWriteCommandAction(project) {

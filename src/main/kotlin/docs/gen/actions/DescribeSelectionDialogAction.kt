@@ -12,13 +12,15 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Computable
-import docs.gen.service.OpenAiService
+import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
+import docs.gen.service.GPTService
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtPsiFactory
 
-
-/**
- * test
- * */
 class DescribeSelectionDialogAction : AnAction() {
+    private val gptService = service<GPTService>()
+    
     override fun update(event: AnActionEvent) {
         val editor = event.getRequiredData(CommonDataKeys.EDITOR)
         val selectionModel: SelectionModel = editor.selectionModel
@@ -26,27 +28,24 @@ class DescribeSelectionDialogAction : AnAction() {
             selectionModel.hasSelection() && selectionModel.selectedText.toString().length >= 16
     }
     
-    private val openAIService = service<OpenAiService>()
-    
     override fun actionPerformed(event: AnActionEvent) {
         val currentProject = event.project ?: return
         val editor = event.getRequiredData(CommonDataKeys.EDITOR)
+        val psiFile = event.getRequiredData(CommonDataKeys.PSI_FILE)
         val selectionModel: SelectionModel = editor.selectionModel
-        val startOffset = selectionModel.selectionStart
-        val document = editor.document
         
-        ProgressManager.getInstance().run(object : Task.Backgroundable(currentProject, "Generating comment") {
+        ProgressManager.getInstance().run(object : Task.Backgroundable(currentProject, "Generating function comment") {
             override fun run(indicator: ProgressIndicator) {
                 indicator.isIndeterminate = true
                 try {
                     val functionText =
                         ApplicationManager.getApplication().runReadAction(Computable { selectionModel.selectedText.toString() })
                     
-                    val documentation = openAIService.describeSelection(functionText)
+                    val documentation = gptService.describeSelection(functionText)
                     
                     ApplicationManager.getApplication().invokeLater {
                         WriteCommandAction.runWriteCommandAction(project) {
-                            document.insertString(startOffset, documentation.toString())
+                            insertKDocComment(psiFile, selectionModel.selectionStart, documentation)
                         }
                     }
                 } catch (e: Exception) {
@@ -60,5 +59,17 @@ class DescribeSelectionDialogAction : AnAction() {
                 }
             }
         })
+    }
+    
+    private fun insertKDocComment(psiFile: PsiFile, offset: Int, documentation: String?) {
+        val psiFactory = KtPsiFactory(psiFile.project)
+        val elementAtOffset = psiFile.findElementAt(offset) ?: return
+        val function = PsiTreeUtil.getParentOfType(elementAtOffset, KtNamedFunction::class.java) ?: return
+        
+        val kdocComment = psiFactory.createComment("$documentation")
+        
+        WriteCommandAction.runWriteCommandAction(psiFile.project) {
+            function.parent.addBefore(kdocComment, function)
+        }
     }
 }

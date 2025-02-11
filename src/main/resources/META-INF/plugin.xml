@@ -7,11 +7,11 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.kotlin</depends>
 
-    <resource-bundle>messages.TextBundle</resource-bundle>
+    <!--    <resource-bundle>messages.TextBundle</resource-bundle>-->
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationConfigurable instance="docs.gen.settings.ConfigurablePluginSettings"
-                                 displayName="DocGen Settings"
+                                 displayName="KDocGen Settings"
                                  id="docs.gen.settings.ConfigurablePluginSettings"/>
     </extensions>
 
@@ -25,14 +25,14 @@
         <action
                 id="org.intellij.sdk.action.DescribeMethodDialogAction"
                 class="docs.gen.actions.DescribeMethodDialogAction"
-                text="Generate function docs"
-                description="Generate comment of function">
+                text="✨ Generate function docs"
+                description="Generate function docs">
             <add-to-group group-id="GenerateGroup" anchor="last"/>
         </action>
         <action
                 id="org.intellij.sdk.action.DescribeSelectionDialogAction"
                 class="docs.gen.actions.DescribeSelectionDialogAction"
-                text="Describe code fragment"
+                text="✨ Describe code fragment"
                 description="Generate comment of selected code fragment">
             <add-to-group group-id="GenerateGroup"
                           relative-to-action="org.intellij.sdk.action.DescribeMethodDialogAction" anchor="after"/>
@@ -40,11 +40,21 @@
         <action
                 id="org.intellij.sdk.action.ImplementMissingCodeInSelectionDialogAction"
                 class="docs.gen.actions.ImplementMissingCodeInSelectionDialogAction"
-                text="Generate IMPL code"
+                text="✨ Generate missing code"
                 description="Generate missing code fragment">
             <add-to-group group-id="GenerateGroup"
                           relative-to-action="org.intellij.sdk.action.DescribeSelectionDialogAction" anchor="after"/>
         </action>
+
+        <action
+                id="org.intellij.sdk.action.GenerateKotestFileAction"
+                class="docs.gen.actions.GenerateKotestFileAction"
+                text="✨ Generate Kotest file"
+                description="Generate Kotest file for sunction">
+            <add-to-group group-id="GenerateGroup"
+                          relative-to-action="org.intellij.sdk.action.DescribeMethodDialogAction" anchor="after"/>
+        </action>
+
     </actions>
 
 

@@ -6,16 +6,20 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 
 @State(
-    name = "PluginSettings",
-    storages = [Storage("docsbuilder.xml")]
+    name = "KDocGenPluginSettings",
+    storages = [Storage("kdocgen.xml")]
 )
 @Service
 class PluginSettings : PersistentStateComponent<PluginSettings.State> {
     
+    companion object {
+        const val DEFAULT_MODEL = "gpt-4-turbo"
+    }
+    
     data class State(
         var apiKey: String = "",
-        var selectedModel: String = "gpt-4",
-        var maxTokens: Int = 500,
+        var selectedModel: String = "",
+        var availableModels: List<String> = mutableListOf(),
     )
     
     private var _state = State()
