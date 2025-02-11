@@ -28,6 +28,27 @@ class DescribeSelectionDialogAction : AnAction() {
             selectionModel.hasSelection() && selectionModel.selectedText.toString().length >= 16
     }
     
+    /**
+     * Responds to an action event by generating a detailed function comment based on the selected
+     * portion of text within the editor in an IntelliJ platform-based IDE. This method is intended
+     * to be used as part of an IntelliJ plugin that automates documentation generation.
+     * When triggered, it extracts the selected text from the active editor, invokes an external
+     * service to generate the documentation, and inserts this documentation back into the file as
+     * a KDoc comment at the start of the selected text.
+     *
+     * @param event AnActionEvent provided by the action's invocation, containing context like
+     *        the current project and data specific to the IDE environment such as the editor and
+     *        file currently being edited.
+     *
+     * This function does not return a value as its type signature is `Unit` (Kotlin's equivalent of `void` in Java).
+     *
+     * @throws Exception in the following cases:
+     *        - If no project is associated with the event (`event.project` is null), it simply returns without executing.
+     *        - `event.getRequiredData(CommonDataKeys.EDITOR)` or `event.getRequiredData(CommonDataKeys.PSI_FILE)`
+     *          might throw if the required data is not present.
+     *        - Document generation or insertion fails. Exceptions within these processes are caught and result in
+     *          an error dialog being shown to the user with the exception message.
+     */
     override fun actionPerformed(event: AnActionEvent) {
         val currentProject = event.project ?: return
         val editor = event.getRequiredData(CommonDataKeys.EDITOR)

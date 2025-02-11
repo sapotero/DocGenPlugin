@@ -26,6 +26,33 @@ class DescribeMethodDialogAction : AnAction() {
         event.presentation.isEnabledAndVisible = isVisible
     }
     
+    /**
+     * Handles the action of automatic documentation generation for a selected code element within the IDE.
+     * This function responds to action events triggered in the IDE to generate and insert documentation comments
+     * for a selected `PsiElement`, which represents an element of the code in IntelliJ Platform SDK.
+     *
+     * @param event An instance of `AnActionEvent` containing context data and necessary information such as the project,
+     *        the current editor, and the selected code element. This context is used to determine where the documentation should be generated.
+     *
+     * Execution Flow:
+     * - Retrieves the current project and the selected code element (PsiElement) from the event.
+     * - Runs a background task to avoid blocking the main UI thread. This task:
+     *   - Marks the progress indicator indeterminate as the duration is unknown.
+     *   - Requests a read action to safely fetch the text of the selected element.
+     *   - Uses an external service (`gptService`) to generate the documentation for the fetched code.
+     *   - Schedules a write action to insert the generated documentation into the codebase as a documentation comment.
+     *   - Handles any exceptions during the process by showing an error dialog in the IDE.
+     *
+     * Note:
+     * - The function is designed to be used with coding environments supported by IntelliJ Platform SDK.
+     * - It ensures thread-safety by properly managing read and write actions in the IDE's threading model.
+     *
+     * Throws:
+     * - `Exception`: Propagates exceptions from the read or write operations or from the external documentation service.
+     *    In such cases, an error dialog is displayed in the UI.
+     *
+     * @return Nothing is returned as this is an event handler method.
+     */
     override fun actionPerformed(event: AnActionEvent) {
         val currentProject = event.project ?: return
         val selectedElement = event.getData(CommonDataKeys.NAVIGATABLE) as? PsiElement ?: return

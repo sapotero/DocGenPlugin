@@ -2,8 +2,10 @@ package docs.gen.settings
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.options.Configurable
+import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.Messages
 import docs.gen.service.OpenAiService
+import docs.gen.settings.PluginSettings.Companion.DEFAULT_MODEL
 import java.awt.BorderLayout
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
@@ -57,7 +59,7 @@ class ConfigurablePluginSettings : Configurable {
         panel.add(apiKeyPanel, gbc.apply { gridx = 1; weightx = 1.0 })
         
         // Model Selection
-        modelComboBox = JComboBox<String>().apply {
+        modelComboBox = ComboBox<String>().apply {
             isEnabled = pluginSettings.apiKey.isNotBlank()
             pluginSettings.availableModels.forEach { addItem(it) }
             selectedItem = pluginSettings.selectedModel
@@ -87,7 +89,7 @@ class ConfigurablePluginSettings : Configurable {
         
         setLoading(true)
         SwingUtilities.invokeLater {
-            val isValid = gptService.validateApiKey(apiKey) // Simulated API call
+            val isValid = gptService.validateApiKey(apiKey)
             SwingUtilities.invokeLater {
                 if (isValid) {
                     pluginSettings.apiKey = apiKey
@@ -104,7 +106,7 @@ class ConfigurablePluginSettings : Configurable {
     private fun loadAvailableModels() {
         setLoading(true)
         SwingUtilities.invokeLater {
-            val models = gptService.fetchAvailableModels() // Simulated API call
+            val models = gptService.fetchAvailableModels()
             SwingUtilities.invokeLater {
                 setLoading(false)
                 if (models.isNotEmpty()) {
@@ -112,7 +114,7 @@ class ConfigurablePluginSettings : Configurable {
                     modelComboBox.apply {
                         removeAllItems()
                         models.forEach { addItem(it) }
-                        selectedItem = pluginSettings.selectedModel
+                        selectedItem = DEFAULT_MODEL
                         isEnabled = true
                     }
                 } else {
@@ -138,7 +140,7 @@ class ConfigurablePluginSettings : Configurable {
     
     override fun apply() {
         pluginSettings.apiKey = apiKeyField.text.trim()
-        pluginSettings.selectedModel = modelComboBox.selectedItem?.toString() ?: "gpt-4-turbo"
+        pluginSettings.selectedModel = modelComboBox.selectedItem?.toString() ?: DEFAULT_MODEL
     }
     
     override fun reset() {

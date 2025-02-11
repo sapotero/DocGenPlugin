@@ -7,8 +7,6 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.kotlin</depends>
 
-    <!--    <resource-bundle>messages.TextBundle</resource-bundle>-->
-
     <extensions defaultExtensionNs="com.intellij">
         <applicationConfigurable instance="docs.gen.settings.ConfigurablePluginSettings"
                                  displayName="KDocGen Settings"
@@ -56,10 +54,4 @@
         </action>
 
     </actions>
-
-
-    <applicationListeners>
-        <listener class="docs.gen.listener.DocActivationListener"
-                  topic="com.intellij.openapi.application.ApplicationActivationListener"/>
-    </applicationListeners>
 </idea-plugin>
