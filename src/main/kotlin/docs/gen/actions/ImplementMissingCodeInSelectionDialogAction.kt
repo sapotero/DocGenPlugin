@@ -1,5 +1,6 @@
 package docs.gen.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -13,12 +14,13 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Computable
 import docs.gen.service.GPTService
+import docs.gen.utils.removeCodeLines
 
 class ImplementMissingCodeInSelectionDialogAction : AnAction() {
     private val gptService = service<GPTService>()
 
     override fun update(event: AnActionEvent) {
-        val editor = event.getRequiredData(CommonDataKeys.EDITOR)
+        val editor = event.getData(CommonDataKeys.EDITOR) ?: return
         val selectionModel: SelectionModel = editor.selectionModel
         event.presentation.isEnabledAndVisible =
             selectionModel.hasSelection()
@@ -44,7 +46,7 @@ class ImplementMissingCodeInSelectionDialogAction : AnAction() {
      */
     override fun actionPerformed(event: AnActionEvent) {
         val currentProject = event.project ?: return
-        val editor = event.getRequiredData(CommonDataKeys.EDITOR)
+        val editor = event.getData(CommonDataKeys.EDITOR) ?: return
         val selectionModel: SelectionModel = editor.selectionModel
         val startOffset = selectionModel.selectionStart
         val endOffset = selectionModel.selectionEnd
@@ -62,7 +64,7 @@ class ImplementMissingCodeInSelectionDialogAction : AnAction() {
                     ApplicationManager.getApplication().invokeLater {
                         WriteCommandAction.runWriteCommandAction(project) {
                             document.deleteString(startOffset, endOffset)
-                            document.insertString(startOffset, code)
+                            document.insertString(startOffset, code.removeCodeLines())
                         }
                     }
                 } catch (e: Exception) {
@@ -77,4 +79,6 @@ class ImplementMissingCodeInSelectionDialogAction : AnAction() {
             }
         })
     }
+    
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 }

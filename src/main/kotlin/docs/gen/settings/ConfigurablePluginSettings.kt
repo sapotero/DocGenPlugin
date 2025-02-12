@@ -1,15 +1,16 @@
 package docs.gen.settings
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.Messages
+import com.intellij.util.ui.JBUI
 import docs.gen.service.OpenAiService
 import docs.gen.settings.PluginSettings.Companion.DEFAULT_MODEL
 import java.awt.BorderLayout
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
-import java.awt.Insets
 import javax.swing.JButton
 import javax.swing.JComboBox
 import javax.swing.JComponent
@@ -19,7 +20,6 @@ import javax.swing.JSeparator
 import javax.swing.JTextField
 import javax.swing.SwingConstants
 import javax.swing.SwingUtilities
-import javax.swing.border.EmptyBorder
 
 class ConfigurablePluginSettings : Configurable {
     private val pluginSettings = service<PluginSettings>().state
@@ -35,11 +35,11 @@ class ConfigurablePluginSettings : Configurable {
     
     override fun createComponent(): JComponent {
         panel = JPanel(GridBagLayout()).apply {
-            border = EmptyBorder(10, 10, 10, 10)
+            border = JBUI.Borders.empty(10)
         }
         
         val gbc = GridBagConstraints().apply {
-            insets = Insets(5, 5, 5, 5)
+            insets = JBUI.insets(5)
             fill = GridBagConstraints.HORIZONTAL
             anchor = GridBagConstraints.WEST
         }
@@ -88,7 +88,7 @@ class ConfigurablePluginSettings : Configurable {
         }
         
         setLoading(true)
-        SwingUtilities.invokeLater {
+        ApplicationManager.getApplication().executeOnPooledThread {
             val isValid = gptService.validateApiKey(apiKey)
             SwingUtilities.invokeLater {
                 if (isValid) {
@@ -105,7 +105,7 @@ class ConfigurablePluginSettings : Configurable {
     
     private fun loadAvailableModels() {
         setLoading(true)
-        SwingUtilities.invokeLater {
+        ApplicationManager.getApplication().executeOnPooledThread {
             val models = gptService.fetchAvailableModels()
             SwingUtilities.invokeLater {
                 setLoading(false)

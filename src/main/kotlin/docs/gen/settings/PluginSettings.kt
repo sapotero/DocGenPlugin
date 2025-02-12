@@ -9,7 +9,7 @@ import com.intellij.openapi.components.Storage
     name = "KDocGenPluginSettings",
     storages = [Storage("kdocgen.xml")]
 )
-@Service
+@Service(Service.Level.APP)
 class PluginSettings : PersistentStateComponent<PluginSettings.State> {
     
     companion object {
@@ -29,6 +29,4 @@ class PluginSettings : PersistentStateComponent<PluginSettings.State> {
     override fun loadState(state: State) {
         _state = state
     }
-    
-    
 }

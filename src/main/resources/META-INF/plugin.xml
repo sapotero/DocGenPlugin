@@ -1,10 +1,9 @@
-<idea-plugin allow-unload-without-restart="true">
+<idea-plugin>
     <id>docs.gen.helper</id>
     <name>KDocGen</name>
     <vendor>Egor Sapozhnikov</vendor>
 
     <depends>com.intellij.modules.java</depends>
-    <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.kotlin</depends>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -14,23 +13,22 @@
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <org.jetbrains.kotlin.supportsKotlinPluginMode>
-            <mode>api</mode>
-        </org.jetbrains.kotlin.supportsKotlinPluginMode>
+        <supportsKotlinPluginMode supportsK2="true" supportsK1="true"/>
     </extensions>
+
 
     <actions>
         <action
                 id="org.intellij.sdk.action.DescribeMethodDialogAction"
                 class="docs.gen.actions.DescribeMethodDialogAction"
-                text="✨ Generate function docs"
+                text="✨ Generate Function Docs"
                 description="Generate function docs">
             <add-to-group group-id="GenerateGroup" anchor="last"/>
         </action>
         <action
                 id="org.intellij.sdk.action.DescribeSelectionDialogAction"
                 class="docs.gen.actions.DescribeSelectionDialogAction"
-                text="✨ Describe code fragment"
+                text="✨ Describe Code Fragment"
                 description="Generate comment of selected code fragment">
             <add-to-group group-id="GenerateGroup"
                           relative-to-action="org.intellij.sdk.action.DescribeMethodDialogAction" anchor="after"/>
@@ -38,7 +36,7 @@
         <action
                 id="org.intellij.sdk.action.ImplementMissingCodeInSelectionDialogAction"
                 class="docs.gen.actions.ImplementMissingCodeInSelectionDialogAction"
-                text="✨ Generate missing code"
+                text="✨ Generate Missing Code"
                 description="Generate missing code fragment">
             <add-to-group group-id="GenerateGroup"
                           relative-to-action="org.intellij.sdk.action.DescribeSelectionDialogAction" anchor="after"/>
@@ -47,7 +45,7 @@
         <action
                 id="org.intellij.sdk.action.GenerateKotestFileAction"
                 class="docs.gen.actions.GenerateKotestFileAction"
-                text="✨ Generate Kotest file"
+                text="✨ Generate Kotest File"
                 description="Generate Kotest file for sunction">
             <add-to-group group-id="GenerateGroup"
                           relative-to-action="org.intellij.sdk.action.DescribeMethodDialogAction" anchor="after"/>

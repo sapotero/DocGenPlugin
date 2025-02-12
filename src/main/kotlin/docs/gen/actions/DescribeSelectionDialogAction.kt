@@ -1,5 +1,6 @@
 package docs.gen.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -22,7 +23,7 @@ class DescribeSelectionDialogAction : AnAction() {
     private val gptService = service<GPTService>()
     
     override fun update(event: AnActionEvent) {
-        val editor = event.getRequiredData(CommonDataKeys.EDITOR)
+        val editor = event.getData(CommonDataKeys.EDITOR) ?: return
         val selectionModel: SelectionModel = editor.selectionModel
         event.presentation.isEnabledAndVisible =
             selectionModel.hasSelection() && selectionModel.selectedText.toString().length >= 16
@@ -51,8 +52,8 @@ class DescribeSelectionDialogAction : AnAction() {
      */
     override fun actionPerformed(event: AnActionEvent) {
         val currentProject = event.project ?: return
-        val editor = event.getRequiredData(CommonDataKeys.EDITOR)
-        val psiFile = event.getRequiredData(CommonDataKeys.PSI_FILE)
+        val editor = event.getData(CommonDataKeys.EDITOR) ?: return
+        val psiFile = event.getData(CommonDataKeys.PSI_FILE) ?: return
         val selectionModel: SelectionModel = editor.selectionModel
         
         ProgressManager.getInstance().run(object : Task.Backgroundable(currentProject, "Generating function comment") {
@@ -93,4 +94,6 @@ class DescribeSelectionDialogAction : AnAction() {
             function.parent.addBefore(kdocComment, function)
         }
     }
+    
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 }

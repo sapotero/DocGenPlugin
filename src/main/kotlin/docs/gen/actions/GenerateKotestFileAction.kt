@@ -1,5 +1,6 @@
 package docs.gen.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -14,6 +15,8 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.LightVirtualFile
 import docs.gen.service.GPTService
+import docs.gen.utils.removeCodeLines
+import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
@@ -23,7 +26,8 @@ class GenerateKotestFileAction : AnAction() {
     
     override fun update(event: AnActionEvent) {
         val selectedElement = event.getData(CommonDataKeys.PSI_ELEMENT)
-        event.presentation.isEnabledAndVisible = selectedElement is KtNamedFunction
+        val isVisible = selectedElement is KtNamedFunction && selectedElement.parent is KtClassBody
+        event.presentation.isEnabledAndVisible = isVisible
     }
     
     /**
@@ -96,8 +100,5 @@ class GenerateKotestFileAction : AnAction() {
         FileEditorManager.getInstance(project).openFile(scratchFile, true)
     }
     
-    private fun String.removeCodeLines(): String =
-        lineSequence()
-            .filterNot { it.trimStart().startsWith("```") }
-            .joinToString("\n")
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 }

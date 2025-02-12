@@ -10,7 +10,7 @@ import docs.gen.settings.PluginSettings
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-@Service
+@Service(Service.Level.APP)
 class OpenAiService {
     
     companion object {

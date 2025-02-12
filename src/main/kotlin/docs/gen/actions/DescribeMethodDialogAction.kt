@@ -1,5 +1,6 @@
 package docs.gen.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -13,16 +14,16 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Computable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementFactory
-import com.intellij.psi.util.elementType
 import docs.gen.service.GPTService
+import org.jetbrains.kotlin.psi.KtClassBody
+import org.jetbrains.kotlin.psi.KtNamedFunction
 
 class DescribeMethodDialogAction : AnAction() {
     private val gptService = service<GPTService>()
     
     override fun update(event: AnActionEvent) {
         val selectedElement = event.getData(CommonDataKeys.NAVIGATABLE)
-        val isVisible = selectedElement is PsiElement && (
-            selectedElement.elementType.toString() in listOf("METHOD", "FUN"))
+        val isVisible = selectedElement is KtNamedFunction && selectedElement.parent is KtClassBody
         event.presentation.isEnabledAndVisible = isVisible
     }
     
@@ -85,4 +86,7 @@ class DescribeMethodDialogAction : AnAction() {
             }
         })
     }
+    
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+    
 }

@@ -1,7 +1,8 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.intellij.platform.gradle.tasks.RunIdeTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlin)
@@ -13,7 +14,7 @@ plugins {
 }
 
 group = "docs.gen"
-version = "1.0.0-SNAPSHOT"
+version = "1.0.1"
 
 repositories {
     mavenCentral()
@@ -133,6 +134,12 @@ tasks {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.named<RunIdeTask>("runIde") {
+    jvmArgumentProviders += CommandLineArgumentProvider {
+        listOf("-Didea.kotlin.plugin.use.k2=true")
+    }
 }
 
 
