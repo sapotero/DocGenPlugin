@@ -19,6 +19,7 @@ the repetitive tasks.
 ✅ **Automate documentation** – No more writing KDocs manually.  
 ✅ **Generate missing code** – Quickly create function bodies and method stubs.  
 ✅ **Simplify testing** – Instantly generate Kotest test files for your functions.  
+✅ **Analyze function dependencies** – Tree-shake a function and extract relevant information.  
 ✅ **Enhance readability** – Insert meaningful comments with ease.  
 ✅ **Seamless IntelliJ IDEA integration** – Works smoothly with a simple shortcut.
 
@@ -30,6 +31,14 @@ Stay productive, write better code, and let KDocGen handle the rest! 🚀
 - 🔹 **Generate function documentation**: Insert AI-assisted documentation for a selected function.
 - 🔹 **Generate implementation (`IMPL`)**: Automatically create method stubs and function bodies.
 - 🔹 **Generate comments**: Add meaningful comments for selected code.
+- 🔹 **Tree-shaking (Experimental)**: Extract essential function details and generate different cool things:
+   - A raw tree-shaken file.
+   - A Kotest file with empty test cases.
+   - A Kotest file with initial test implementations.
+
+  ⚠️ *Important: All experimental features are only available in **Kotlin K1 mode**. They will not work in K2 mode.*  
+  🛠 *Must be enabled in plugin settings.*
+
 - 🔹 **Seamless integration**: Works effortlessly within IntelliJ IDEA using a single shortcut.
 
 ---
@@ -39,8 +48,9 @@ Stay productive, write better code, and let KDocGen handle the rest! 🚀
 2. Go to **Plugins** → **Marketplace**.
 3. Search for **KDocGen**.
 4. Click **Install**.
-5. Go to **Settings** → **KDocGen Settings** and enter your OpenAI API key.
-6. Click **Save**, and you're ready to go!
+5. Go to **Settings** → **KDocGen Settings**.
+6. (Optional) Enable **Tree-Shaking Mode** if you want to use the experimental feature (available only in K1 mode).
+7. Click **Save**, and you're ready to go!
 
 ---
 
@@ -72,6 +82,18 @@ Stay productive, write better code, and let KDocGen handle the rest! 🚀
 3. **Select** `✨ Generate Kotest file`.
 4. The plugin will generate a **scratch file** with a test for this function using `BehaviorSpec`.
 
+### **Using the Experimental Tree-Shaking Feature**
+
+> 🛠 *This feature must be enabled in plugin settings and works only in Kotlin K1 mode.*
+
+1. **Navigate to a [single-expression](https://kotlinlang.org/docs/functions.html#single-expression-functions) function
+   **.
+2. **Press** [`⌘ + N`] (on macOS).
+3. **Select** `✨ Tree-Shake Function`.
+4. The selected file will be generated automatically and open as a new `scratch file`.
+
+> ⚠️ **Note:** If your project is running in Kotlin **K2 mode**, experimental features will be **disabled**.
+
 ### **Generating a comment for selected code (or text)**
 
 1. **Select a piece of code** (e.g., a function or class).
@@ -86,6 +108,8 @@ Stay productive, write better code, and let KDocGen handle the rest! 🚀
 | Generate Code & Docs | `⌘ + N` |  
 
 ## 📌 Future Enhancements
+
+- 🔹 Full K2 support for experimental features.
 - 🔹 Improved AI-based documentation generation.
 - 🔹 Support for additional languages (e.g., Java).
 

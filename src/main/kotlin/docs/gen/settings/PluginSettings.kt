@@ -4,6 +4,7 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
+import docs.gen.settings.features.TreeShakingMode
 
 @State(
     name = "KDocGenPluginSettings",
@@ -20,6 +21,8 @@ class PluginSettings : PersistentStateComponent<PluginSettings.State> {
         var apiKey: String = "",
         var selectedModel: String = "",
         var availableModels: List<String> = mutableListOf(),
+        var experimentalFeaturesEnabled: Boolean = false,
+        var treeShakingMode: TreeShakingMode = TreeShakingMode.DISABLED,
     )
     
     private var _state = State()
@@ -30,3 +33,4 @@ class PluginSettings : PersistentStateComponent<PluginSettings.State> {
         _state = state
     }
 }
+

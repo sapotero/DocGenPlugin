@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.2] - 2025-02-16
+
+### Added
+
+- Experimental option for tree-shaking a function to gather useful information and generate different outputs (must be
+  enabled in plugin settings):
+  - Create a raw tree-shaken file.
+  - Generate a Kotest file with empty test cases.
+  - Generate a Kotest file with initial test implementations.
+
 ## [1.0.1] - 2025-02-12
 
 ### Changed

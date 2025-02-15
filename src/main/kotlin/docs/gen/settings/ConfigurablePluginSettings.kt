@@ -8,10 +8,13 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.util.ui.JBUI
 import docs.gen.service.OpenAiService
 import docs.gen.settings.PluginSettings.Companion.DEFAULT_MODEL
+import docs.gen.settings.features.TreeShakingMode
 import java.awt.BorderLayout
+import java.awt.Dimension
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import javax.swing.JButton
+import javax.swing.JCheckBox
 import javax.swing.JComboBox
 import javax.swing.JComponent
 import javax.swing.JLabel
@@ -30,6 +33,9 @@ class ConfigurablePluginSettings : Configurable {
     private lateinit var checkKeyButton: JButton
     private lateinit var modelComboBox: JComboBox<String>
     private lateinit var loadingLabel: JLabel
+    
+    private lateinit var experimentalFeaturesCheckbox: JCheckBox
+    private lateinit var treeShakingComboBox: JComboBox<TreeShakingMode>
     
     override fun getDisplayName(): String = "KDocGen Settings"
     
@@ -68,7 +74,7 @@ class ConfigurablePluginSettings : Configurable {
         panel.add(JLabel("Model:"), gbc.apply { gridx = 0; gridy = 1; weightx = 0.0 })
         panel.add(modelComboBox, gbc.apply { gridx = 1; weightx = 1.0 })
         
-        // Loading Indicator (Spinner Text)
+        // Loading Indicator
         loadingLabel = JLabel("Loading...").apply {
             isVisible = false
             horizontalAlignment = SwingConstants.CENTER
@@ -76,6 +82,35 @@ class ConfigurablePluginSettings : Configurable {
         panel.add(loadingLabel, gbc.apply { gridx = 0; gridy = 2; gridwidth = 2 })
         
         panel.add(JSeparator(SwingConstants.HORIZONTAL), gbc.apply { gridx = 0; gridy = 3; gridwidth = 2 })
+        
+        // Experimental Features Section
+        experimentalFeaturesCheckbox =
+            JCheckBox("[K1] Enable Experimental Features", pluginSettings.experimentalFeaturesEnabled).apply {
+                addActionListener { treeShakingComboBox.isEnabled = isSelected }
+            }
+        
+        panel.add(experimentalFeaturesCheckbox, gbc.apply { gridx = 0; gridy = 4; gridwidth = 2 })
+        
+        treeShakingComboBox = ComboBox(
+            arrayOf(
+                TreeShakingMode.DISABLED,
+                TreeShakingMode.JUST_BUILD_TREE,
+                TreeShakingMode.GENERATE_EMPTY_TEST,
+                TreeShakingMode.GENERATE_TEST_WITH_IMPLEMENTATION,
+            )
+        ).apply {
+            selectedItem = pluginSettings.treeShakingMode
+            isEnabled = pluginSettings.experimentalFeaturesEnabled
+        }
+        
+        val treeShakingLabel = JLabel("Tree-shaking").apply {
+            horizontalAlignment = SwingConstants.LEFT
+            preferredSize = Dimension(150, preferredSize.height) // Ensures it has enough width
+        }
+        
+        panel.add(experimentalFeaturesCheckbox, gbc.apply { gridx = 0; gridy = 4; gridwidth = 2 })
+        panel.add(treeShakingLabel, gbc.apply { gridx = 0; gridy = 5; weightx = 0.5 })
+        panel.add(treeShakingComboBox, gbc.apply { gridx = 1; gridy = 5; weightx = 0.7 })
         
         return panel
     }
@@ -136,11 +171,16 @@ class ConfigurablePluginSettings : Configurable {
     
     override fun isModified(): Boolean =
         apiKeyField.text.trim() != pluginSettings.apiKey ||
-            modelComboBox.selectedItem?.toString() != pluginSettings.selectedModel
+            modelComboBox.selectedItem?.toString() != pluginSettings.selectedModel ||
+            experimentalFeaturesCheckbox.isSelected != pluginSettings.experimentalFeaturesEnabled ||
+            treeShakingComboBox.selectedItem != pluginSettings.treeShakingMode
     
     override fun apply() {
         pluginSettings.apiKey = apiKeyField.text.trim()
         pluginSettings.selectedModel = modelComboBox.selectedItem?.toString() ?: DEFAULT_MODEL
+        pluginSettings.experimentalFeaturesEnabled = experimentalFeaturesCheckbox.isSelected
+        pluginSettings.treeShakingMode = (treeShakingComboBox.selectedItem as? TreeShakingMode)
+            ?: TreeShakingMode.DISABLED
     }
     
     override fun reset() {
@@ -149,5 +189,9 @@ class ConfigurablePluginSettings : Configurable {
         pluginSettings.availableModels.forEach { modelComboBox.addItem(it) }
         modelComboBox.selectedItem = pluginSettings.selectedModel
         modelComboBox.isEnabled = pluginSettings.apiKey.isNotBlank()
+        
+        experimentalFeaturesCheckbox.isSelected = pluginSettings.experimentalFeaturesEnabled
+        treeShakingComboBox.selectedItem = pluginSettings.treeShakingMode
+        treeShakingComboBox.isEnabled = pluginSettings.experimentalFeaturesEnabled
     }
 }

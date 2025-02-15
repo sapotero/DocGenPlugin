@@ -51,5 +51,15 @@
                           relative-to-action="org.intellij.sdk.action.DescribeMethodDialogAction" anchor="after"/>
         </action>
 
+
+        <action
+                id="org.intellij.sdk.action.ShakeTreeAction"
+                class="docs.gen.actions.ShakeTreeAction"
+                text="✨ Tree-Shake Function"
+                description="Tree-shake function">
+            <add-to-group group-id="GenerateGroup"
+                          relative-to-action="org.intellij.sdk.action.GenerateKotestFileAction" anchor="after"/>
+        </action>
+
     </actions>
 </idea-plugin>

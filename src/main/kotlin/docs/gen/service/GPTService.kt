@@ -130,6 +130,58 @@ class GPTService {
         ).execute()
     
     
+    fun generateTreeSaknKotestTests(callTree: String, addExampleImplementation: Boolean = false) =
+        ChatRequest(
+            model = settings.selectedModel,
+            messages = listOf(
+                Message(
+                    role = "system",
+                    content = """
+                    You are an expert Kotlin developer and testing assistant.
+                    
+                    Given a Main class with one function and interfaces with function, that it use. Create a valid Kotest test file.
+                    Starts from the Main class's entry function. Follows its complete call tree through dependencies.Tests all functions in the execution chain
+                    
+                    Strict Rules:
+                    - Create nested test only for function defined in Main class.
+                    - Does not include test for other classes, use them for better test generation in Main class.
+                    - Group related functions into logical categories using `Given` blocks.
+                    - Each function must have a `When` block.
+                    - Each `When` block must contain at least one `Then` block.
+                    - If a function can return an error, add a separate `When` block explicitly handling errors.
+                    - Function names must be based on the provided call tree; do not create or infer new functions.
+                    - Only generate test cases for functions explicitly defined in the call tree.
+                    - Use only the return types defined in the struct definitions; do not introduce new types.
+                    - Do not include comments, markdown, or any formatting outside of valid Kotlin syntax.
+                    
+                    ${
+                        "- All given-when-then blocks must be empty, but contain verbose valid name".includeIf(!addExampleImplementation)
+                    }
+                    
+                    
+                    Expected Output:
+                    - A valid Kotest test class with `BehaviorSpec` style.
+                    - Logical `Given` blocks for function groupings.
+                    - `When` blocks for each function scenario.
+                    
+                    ${
+                        "- `Then` blocks with empty bodies.".includeIf(!addExampleImplementation)
+                    }
+                    ${
+                        "- Add implementation for each case with kotlin comments using mockk".includeIf(
+                            addExampleImplementation
+                        )
+                    }
+                    
+                """.trimIndent()
+                ),
+                Message(
+                    role = "user", content = callTree
+                )
+            )
+        ).execute()
+    
+    
     /**
      * Executes a ChatRequest and returns the description of the request.
      *
@@ -148,4 +200,10 @@ class GPTService {
      *
      */
     private fun ChatRequest.execute() = openAiService.sendRequest(this)
+    
+    fun String.includeIf(condition: Boolean) =
+        when {
+            condition -> this
+            else -> "\n"
+        }
 }

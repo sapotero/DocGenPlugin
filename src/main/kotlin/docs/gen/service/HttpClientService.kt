@@ -4,33 +4,29 @@ import com.intellij.openapi.diagnostic.logger
 import kotlinx.serialization.json.Json
 import java.net.URI
 import java.net.http.HttpClient
+import java.net.http.HttpClient.Version
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.time.Duration
+import kotlin.math.min
+import kotlin.math.pow
 
 class HttpClientService {
     
-    private val client = HttpClient.newHttpClient()
+    private val client = HttpClient.newBuilder()
+        .version(Version.HTTP_2)
+        .connectTimeout(Duration.ofSeconds(10))
+        .build()
+    
     private val log = logger<HttpClientService>()
     
-    /**
-     * Sends an HTTP request to a specified URI using the provided method and includes an API key for authorization.
-     * The request can optionally include a body for methods that support body data (e.g., POST). The function
-     * handles response processing, including error handling through status codes and logs an error message on failure.
-     *
-     * @param uri The URI to which the request will be sent. It must be a properly formatted URL.
-     * @param method The HTTP method to be used for the request, with a default of "GET". Supported methods include "GET", "POST", and "HEAD".
-     * @param apiKey The API key to be included in the request header for authorization. It must be a valid bearer token.
-     * @param body An optional JSON formatted string to be sent as the request's body content. This parameter is relevant only for requests that submit data to the server like POST.
-     * @return A `Result<String>` which, on success, contains the response body as a string if the status code is 200.
-     *         On error, the function logs the error detail and returns a `Result` containing the respective exception.
-     * @throws IllegalArgumentException If the HTTP method provided is not supported.
-     * @throws IllegalStateException If the server responds with a non-200 status code, indicating a call failure with description provided by the API error message response.
-     */
     fun sendRequest(
         uri: String,
         method: String = "GET",
         apiKey: String,
-        body: String? = null
+        body: String? = null,
+        maxRetries: Int = 3,
+        initialDelayMillis: Long = 500
     ): Result<String> {
         val requestBuilder = HttpRequest.newBuilder()
             .uri(URI.create(uri))
@@ -44,15 +40,29 @@ class HttpClientService {
             else -> throw IllegalArgumentException("Unsupported HTTP method: $method")
         }
         
-        return runCatching {
-            val response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString())
-            if (response.statusCode() == 200) {
-                response.body()
-            } else {
-                val error = Json.decodeFromString<Map<String, String>>(response.body())
-                log.error("API Error ${response.statusCode()}: ${error["message"]}")
-                throw IllegalStateException("API Error: ${error["message"]}")
+        var attempt = 0
+        while (attempt < maxRetries) {
+            try {
+                val response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString())
+                
+                if (response.statusCode() == 200) {
+                    return Result.success(response.body())
+                } else {
+                    val error = Json.decodeFromString<Map<String, String>>(response.body())
+                    log.error("API Error ${response.statusCode()}: ${error["message"]}")
+                    return Result.failure(IllegalStateException("API Error: ${error["message"]}"))
+                }
+            } catch (e: Exception) {
+                log.warn("Request failed (attempt $attempt/${maxRetries - 1}): ${e.message}")
+                if (attempt == maxRetries - 1) return Result.failure(e)
+                
+                // Exponential backoff
+                val delay = min(initialDelayMillis * 2.0.pow(attempt.toDouble()).toLong(), 5000L)
+                Thread.sleep(delay)
+                attempt++
             }
         }
+        
+        return Result.failure(IllegalStateException("Request failed after $maxRetries attempts"))
     }
 }
