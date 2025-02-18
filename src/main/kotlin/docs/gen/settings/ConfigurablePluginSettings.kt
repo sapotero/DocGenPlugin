@@ -97,6 +97,7 @@ class ConfigurablePluginSettings : Configurable {
                 TreeShakingMode.JUST_BUILD_TREE,
                 TreeShakingMode.GENERATE_EMPTY_TEST,
                 TreeShakingMode.GENERATE_TEST_WITH_IMPLEMENTATION,
+                TreeShakingMode.GENERATE_QA_REPORT,
             )
         ).apply {
             selectedItem = pluginSettings.treeShakingMode

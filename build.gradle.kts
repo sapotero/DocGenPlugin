@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "docs.gen"
-version = "1.0.2"
+version = "1.0.3"
 
 repositories {
     mavenCentral()
@@ -138,7 +138,9 @@ tasks.test {
 
 tasks.named<RunIdeTask>("runIde") {
     jvmArgumentProviders += CommandLineArgumentProvider {
-        listOf("-Didea.kotlin.plugin.use.k2=true")
+        listOf(
+//            "-Didea.kotlin.plugin.use.k2=true"
+        )
     }
 }
 

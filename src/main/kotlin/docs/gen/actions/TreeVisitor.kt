@@ -145,6 +145,14 @@ class TreeVisitor(private val bindingContext: BindingContext, val maxDepth: Int 
         return reportBuilder.toString()
     }
     
+    fun getCallTree() = """
+        Call Tree
+        ---
+        ```text
+        $treeBuilder
+        ```
+    """.trimIndent()
+    
     fun generateFullReport(): String {
         return buildString {
             append("\n## Classes:\n")

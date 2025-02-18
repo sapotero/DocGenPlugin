@@ -181,6 +181,90 @@ class GPTService {
             )
         ).execute()
     
+    fun generateTestPlanBack(callTree: String, functionName: String?) =
+        ChatRequest(
+            model = settings.selectedModel,
+            messages = listOf(
+                Message(
+                    role = "system",
+                    content = """
+                    # QA Report for $functionName 🚀
+
+                    ## Enhancements Made:
+                    - Added executive summary for quick overview.
+                    - Expanded security, performance, and logging sections.
+                    - Included test prioritization, idempotency, and environment parity.
+                    - Added examples and explicit edge cases.
+                    
+                    ## Executive Summary 🌟
+                    Briefly summarize the function’s purpose, testing scope, critical risks.
+                    
+                    ### 1. Test Objective 📝
+                    
+                    #### Function Description
+                    - Clearly define the function’s role in the system (e.g., "Processes user payments and updates order status").
+                    - Mention business rules it enforces (e.g., "Applies discounts for bulk orders").
+                    - List key dependencies (e.g., libraries, SDK versions).
+                    
+                    #### Expected Behavior
+                    - Provide input/output examples (e.g., input: `{ "userId": 123 }`, output: `{ "status": "success" }`).
+                    - Detail side effects (e.g., "Updates orders table and sends a confirmation email").
+                    
+                    ### 2. Test Cases 🧪
+                    
+                    #### Successful Execution ✅
+                    - **Test Case Name**: "Should process valid input within 200ms"
+                    - **Test Priority**: Critical/High/Medium
+                    - **Examples**: Valid payloads, edge values (e.g., maximum allowed integers).
+                    
+                    #### Error Handling ⚠️
+                    - **Test Case Name**: "Should return 401 if auth token is invalid"
+                    - **Validate**: HTTP status codes, error message consistency, and alert triggers (e.g., PagerDuty).
+                    
+                    #### Edge Case Handling 🔲
+                    - **Explicit Scenarios**: Empty arrays, null/undefined inputs, timezone-sensitive dates.
+                    - **Boundaries**: Strings at max allowed length, negative values.
+                    
+                    #### Integration with External Services 🔗
+                    - Test: Rate-limiting, idempotency keys, and mock responses (e.g., 5xx errors).
+                    
+                    ### 3. Test Tools 🛠️
+                    - **API Testing**: Postman (for manual tests), REST Assured (automation).
+                    - **Contract Testing**: Pact to validate API agreements.
+                    - **Performance**: k6 (scriptable load testing).
+                    - **Security**: OWASP ZAP for vulnerability scans.
+                    
+                    ### 4. Test Coverage 📊
+                    - **Idempotency**: Ensure duplicate requests don’t cause side effects.
+                    - **Backward Compatibility**: Test with older API versions if applicable.
+                    
+                    ### 5. Performance Considerations ⚡
+                    - **Baseline Metrics**: Define acceptable response times (e.g., p95 < 300ms).
+                    - **Endurance Testing**: Run for 24hrs to detect memory leaks.
+                    - **Resource Usage**: Monitor CPU/memory during load tests.
+                    
+                    ### 6. Security Considerations 🔒
+                    - **Validate**: Encryption (TLS for APIs), OAuth scopes, and input sanitization.
+                    - **Compliance**: GDPR, HIPAA, or PCI-DSS requirements.
+                    
+                    ### 7. Logging and Monitoring 📡
+                    - **Log Structure**: JSON format with traceId for cross-service tracing.
+                    - **Sensitive Data**: Ensure no PII is logged (e.g., mask credit card numbers).
+                    
+                    ### 8. Additional Notes 💡
+                    - **Environment Parity**: Test environment should mirror production (e.g., same DB version).
+                    - **Audit Trails**: Log critical actions (e.g., `order_updated`).
+                    - **Test Data Strategy**: Use synthetic data generation tools (e.g., Faker).
+                    
+                    **Final Tip**: Add a Risk Assessment Matrix (e.g., likelihood vs. impact) to prioritize fixes! 🔥
+                    Strict rule - generate report only for $functionName defined in Main class
+                """.trimIndent()
+                ),
+                Message(
+                    role = "user", content = callTree
+                )
+            )
+        ).execute()
     
     /**
      * Executes a ChatRequest and returns the description of the request.

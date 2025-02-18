@@ -21,6 +21,7 @@ the repetitive tasks.
 ✅ **Simplify testing** – Instantly generate Kotest test files for your functions.  
 ✅ **Analyze function dependencies** – Tree-shake a function and extract relevant information.  
 ✅ **Enhance readability** – Insert meaningful comments with ease.  
+✅ **Generate QA reports** – Add useful reports that can help with testing.  
 ✅ **Seamless IntelliJ IDEA integration** – Works smoothly with a simple shortcut.
 
 Stay productive, write better code, and let KDocGen handle the rest! 🚀
@@ -31,10 +32,11 @@ Stay productive, write better code, and let KDocGen handle the rest! 🚀
 - 🔹 **Generate function documentation**: Insert AI-assisted documentation for a selected function.
 - 🔹 **Generate implementation (`IMPL`)**: Automatically create method stubs and function bodies.
 - 🔹 **Generate comments**: Add meaningful comments for selected code.
-- 🔹 **Tree-shaking (Experimental)**: Extract essential function details and generate different cool things:
-   - A raw tree-shaken file.
-   - A Kotest file with empty test cases.
-   - A Kotest file with initial test implementations.
+- 🔹 **Tree-shaking (Experimental)**: Extract essential function details and generate various useful items:
+    - A raw tree-shaken file.
+    - A Kotest file with empty test cases.
+    - A Kotest file with initial test implementations.
+    - A QA report with helpful descriptions.
 
   ⚠️ *Important: All experimental features are only available in **Kotlin K1 mode**. They will not work in K2 mode.*  
   🛠 *Must be enabled in plugin settings.*
@@ -68,8 +70,8 @@ Stay productive, write better code, and let KDocGen handle the rest! 🚀
 ### **Generating any type of code**
 1. **Write a comment** starting with `// IMPL:`.
 2. Describe what you want to generate, for example:
-   - `// IMPL π の値を小数点以下 10 桁まで計算する関数を記述します。`
-   - `// IMPL Проверить, что строка является UUID`
+    - `// IMPL π の値を小数点以下 10 桁まで計算する関数を記述します。`
+    - `// IMPL Проверить, что строка является UUID`
 3. **Feel free** to add as many `// IMPL` fragments as needed.
 4. **Press** [`⌘ + N`] (on macOS).
 5. **Select** `✨ Generate missing code`.
@@ -93,6 +95,11 @@ Stay productive, write better code, and let KDocGen handle the rest! 🚀
 4. The selected file will be generated automatically and open as a new `scratch file`.
 
 > ⚠️ **Note:** If your project is running in Kotlin **K2 mode**, experimental features will be **disabled**.
+
+### **Generating a QA report**
+
+> To generate a QA report, follow the steps in the **Experimental Tree-Shaking Feature** section, but select
+`Generate QA report` as the tree-shaking behavior in plugin settings.
 
 ### **Generating a comment for selected code (or text)**
 

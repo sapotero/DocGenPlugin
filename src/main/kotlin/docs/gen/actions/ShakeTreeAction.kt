@@ -15,6 +15,7 @@ import docs.gen.service.GPTService
 import docs.gen.settings.PluginSettings
 import docs.gen.settings.features.TreeShakingMode.DISABLED
 import docs.gen.settings.features.TreeShakingMode.GENERATE_EMPTY_TEST
+import docs.gen.settings.features.TreeShakingMode.GENERATE_QA_REPORT
 import docs.gen.settings.features.TreeShakingMode.JUST_BUILD_TREE
 import docs.gen.utils.readAction
 import docs.gen.utils.removeCodeLines
@@ -46,12 +47,17 @@ class ShakeTreeAction : AnAction() {
         
         runAsyncBackgroundTask(project, "Tree-shaking the file") {
             runCatching {
+                val functionName = readAction {
+                    selectedElement.name
+                }
                 val rawTree = buildTree(selectedElement)
                 
                 val generateTreeShakenKotestTests =
                     when (settings.treeShakingMode) {
                         JUST_BUILD_TREE -> rawTree
                         GENERATE_EMPTY_TEST -> gptService.generateTreeSaknKotestTests(rawTree)
+                        GENERATE_QA_REPORT -> gptService.generateTestPlanBack(rawTree, functionName)
+                        
                         else -> gptService.generateTreeSaknKotestTests(rawTree, true)
                     }
                 generateTreeShakenKotestTests
@@ -60,8 +66,8 @@ class ShakeTreeAction : AnAction() {
                 
                 if (content != null) {
                     
-                    if (settings.treeShakingMode == JUST_BUILD_TREE) {
-                        val fileName = "Tree shaked ${className}.md"
+                    if (settings.treeShakingMode in listOf(JUST_BUILD_TREE, GENERATE_QA_REPORT)) {
+                        val fileName = "${className}.md"
                         openScratchFile(fileName, content, project)
                         
                     } else {
