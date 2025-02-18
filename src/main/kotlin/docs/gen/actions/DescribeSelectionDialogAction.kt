@@ -16,6 +16,7 @@ import com.intellij.openapi.util.Computable
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import docs.gen.service.GPTService
+import docs.gen.utils.removeCodeLines
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
@@ -63,7 +64,7 @@ class DescribeSelectionDialogAction : AnAction() {
                     val functionText =
                         ApplicationManager.getApplication().runReadAction(Computable { selectionModel.selectedText.toString() })
                     
-                    val documentation = gptService.describeSelection(functionText)
+                    val documentation = gptService.describeSelection(functionText)?.removeCodeLines()
                     
                     ApplicationManager.getApplication().invokeLater {
                         WriteCommandAction.runWriteCommandAction(project) {

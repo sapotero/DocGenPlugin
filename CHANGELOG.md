@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.4] - 2025-02-18
+
+### Added
+
+- Fix doc comment generation
+
 ## [1.0.3] - 2025-02-18
 
 ### Added

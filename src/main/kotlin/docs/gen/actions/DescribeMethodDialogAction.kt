@@ -15,6 +15,7 @@ import com.intellij.openapi.util.Computable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementFactory
 import docs.gen.service.GPTService
+import docs.gen.utils.removeCodeLines
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
@@ -65,7 +66,7 @@ class DescribeMethodDialogAction : AnAction() {
                     val functionText =
                         ApplicationManager.getApplication().runReadAction(Computable { selectedElement.text })
                     
-                    val documentation = gptService.describeFunction(functionText).toString()
+                    val documentation = gptService.describeFunction(functionText).toString().removeCodeLines()
                     
                     ApplicationManager.getApplication().invokeLater {
                         WriteCommandAction.runWriteCommandAction(project) {
