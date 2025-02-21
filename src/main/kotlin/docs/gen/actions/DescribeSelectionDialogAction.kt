@@ -75,7 +75,7 @@ class DescribeSelectionDialogAction : AnAction() {
                     ApplicationManager.getApplication().invokeLater {
                         Messages.showErrorDialog(
                             currentProject,
-                            "Failed to generate documentation: ${e.message}",
+                            "Failed to describe code: ${e.message}",
                             "Error"
                         )
                     }

@@ -89,7 +89,6 @@ class ConfigurablePluginSettings : Configurable {
                 addActionListener { treeShakingComboBox.isEnabled = isSelected }
             }
         
-        panel.add(experimentalFeaturesCheckbox, gbc.apply { gridx = 0; gridy = 4; gridwidth = 2 })
         
         treeShakingComboBox = ComboBox(
             arrayOf(
@@ -109,9 +108,11 @@ class ConfigurablePluginSettings : Configurable {
             preferredSize = Dimension(150, preferredSize.height) // Ensures it has enough width
         }
         
-        panel.add(experimentalFeaturesCheckbox, gbc.apply { gridx = 0; gridy = 4; gridwidth = 2 })
-        panel.add(treeShakingLabel, gbc.apply { gridx = 0; gridy = 5; weightx = 0.5 })
-        panel.add(treeShakingComboBox, gbc.apply { gridx = 1; gridy = 5; weightx = 0.7 })
+        // Temporary disable
+        // panel.add(experimentalFeaturesCheckbox, gbc.apply { gridx = 0; gridy = 4; gridwidth = 2 })
+        // panel.add(experimentalFeaturesCheckbox, gbc.apply { gridx = 0; gridy = 4; gridwidth = 2 })
+        // panel.add(treeShakingLabel, gbc.apply { gridx = 0; gridy = 5; weightx = 0.5 })
+        // panel.add(treeShakingComboBox, gbc.apply { gridx = 1; gridy = 5; weightx = 0.7 })
         
         return panel
     }

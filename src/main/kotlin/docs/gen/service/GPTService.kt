@@ -27,7 +27,7 @@ class GPTService {
             messages = listOf(
                 Message(
                     role = "system",
-                    content = "Generate a function comment with detailed documentation in the style of KDoc (for Kotlin) or Javadoc (for Java) for the following function;" +
+                    content = "Generate a function comment with detailed documentation in the style of KDoc for Kotlin for the following function in Main class;" +
                         "Please include the purpose of the function, parameters with descriptions, the return type with a description, and any possible exceptions thrown." +
                         "Be specific about each part of the documentation. Return only comment block without any markdown markup"
                 ),
@@ -122,7 +122,8 @@ class GPTService {
                         You are an expert Kotlin developer.
                         Given the following Kotlin code, replace all comments that start with 'IMPL ' with the appropriate implementation.
                         The implementation should follow best practices, be idiomatic, and ensure correctness.
-                        Do not modify any other part of the code
+                        Do not include excessive explanations what happened.
+                        Do not modify any other part of the code.
                     """.trimIndent()
                 ),
                 Message(role = "user", content = codeBlock)

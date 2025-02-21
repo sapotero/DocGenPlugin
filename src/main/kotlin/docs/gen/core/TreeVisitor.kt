@@ -1,4 +1,4 @@
-package docs.gen.actions
+package docs.gen.core
 
 import com.intellij.psi.util.parentOfTypes
 import org.jetbrains.kotlin.descriptors.CallableDescriptor

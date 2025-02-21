@@ -4,7 +4,6 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.SelectionModel
@@ -12,11 +11,12 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.util.Computable
 import docs.gen.service.GPTService
+import docs.gen.utils.invokeLater
+import docs.gen.utils.readAction
 import docs.gen.utils.removeCodeLines
 
-class ImplementMissingCodeInSelectionDialogAction : AnAction() {
+class EnhanceDialogAction : AnAction() {
     private val gptService = service<GPTService>()
 
     override fun update(event: AnActionEvent) {
@@ -56,19 +56,18 @@ class ImplementMissingCodeInSelectionDialogAction : AnAction() {
             override fun run(indicator: ProgressIndicator) {
                 indicator.isIndeterminate = true
                 try {
-                    val codeBlock =
-                        ApplicationManager.getApplication().runReadAction(Computable { selectionModel.selectedText.toString() })
+                    val codeBlock = readAction { selectionModel.selectedText.toString() }
                     
                     val code = gptService.generateCode(codeBlock).toString()
                     
-                    ApplicationManager.getApplication().invokeLater {
+                    invokeLater {
                         WriteCommandAction.runWriteCommandAction(project) {
                             document.deleteString(startOffset, endOffset)
                             document.insertString(startOffset, code.removeCodeLines())
                         }
                     }
                 } catch (e: Exception) {
-                    ApplicationManager.getApplication().invokeLater {
+                    invokeLater {
                         Messages.showErrorDialog(
                             currentProject,
                             "Failed to generate documentation: ${e.message}",

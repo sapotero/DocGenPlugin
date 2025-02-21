@@ -21,23 +21,25 @@
         <action
                 id="org.intellij.sdk.action.DescribeMethodDialogAction"
                 class="docs.gen.actions.DescribeMethodDialogAction"
-                text="✨ Generate Function Docs"
-                description="Generate function docs">
+                text="✨ Generate KDoc"
+                description="Generate KDoc">
             <add-to-group group-id="GenerateGroup" anchor="last"/>
         </action>
+
         <action
                 id="org.intellij.sdk.action.DescribeSelectionDialogAction"
                 class="docs.gen.actions.DescribeSelectionDialogAction"
-                text="✨ Describe Code Fragment"
-                description="Generate comment of selected code fragment">
+                text="✨ Describe Selection"
+                description="Generate a comment for the selected text">
             <add-to-group group-id="GenerateGroup"
                           relative-to-action="org.intellij.sdk.action.DescribeMethodDialogAction" anchor="after"/>
         </action>
+
         <action
                 id="org.intellij.sdk.action.ImplementMissingCodeInSelectionDialogAction"
-                class="docs.gen.actions.ImplementMissingCodeInSelectionDialogAction"
-                text="✨ Generate Missing Code"
-                description="Generate missing code fragment">
+                class="docs.gen.actions.EnhanceDialogAction"
+                text="✨ Process with AI"
+                description="Modify or enhance selection using AI">
             <add-to-group group-id="GenerateGroup"
                           relative-to-action="org.intellij.sdk.action.DescribeSelectionDialogAction" anchor="after"/>
         </action>
@@ -46,20 +48,18 @@
                 id="org.intellij.sdk.action.GenerateKotestFileAction"
                 class="docs.gen.actions.GenerateKotestFileAction"
                 text="✨ Generate Kotest File"
-                description="Generate Kotest file for sunction">
+                description="Generate a Kotest test file">
             <add-to-group group-id="GenerateGroup"
                           relative-to-action="org.intellij.sdk.action.DescribeMethodDialogAction" anchor="after"/>
         </action>
 
-
         <action
                 id="org.intellij.sdk.action.ShakeTreeAction"
-                class="docs.gen.actions.ShakeTreeAction"
-                text="✨ Tree-Shake Function"
-                description="Tree-shake function">
+                class="docs.gen.actions.GenerateQAReport"
+                text="✨ Generate QA Report"
+                description="Analyze and generate a QA report">
             <add-to-group group-id="GenerateGroup"
                           relative-to-action="org.intellij.sdk.action.GenerateKotestFileAction" anchor="after"/>
         </action>
-
     </actions>
 </idea-plugin>

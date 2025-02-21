@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.5] - 2025-02-21
+
+### Changed
+
+- Structural improvements for better performance and maintainability.
+- Enhanced test generation for improved accuracy.
+- Improved KDoc generation for clearer and more comprehensive documentation.
+
 ## [1.0.4] - 2025-02-18
 
 ### Added

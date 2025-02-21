@@ -14,7 +14,7 @@ import docs.gen.settings.features.TreeShakingMode
 class PluginSettings : PersistentStateComponent<PluginSettings.State> {
     
     companion object {
-        const val DEFAULT_MODEL = "gpt-4-turbo"
+        const val DEFAULT_MODEL = "chatgpt-4o-latest"
     }
     
     data class State(
