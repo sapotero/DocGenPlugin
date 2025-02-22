@@ -25,6 +25,8 @@ repositories {
 
 dependencies {
     implementation(libs.logback)
+    
+    // TODO Need to create own implementation of API  -size it too big (3 -> 15 mb)
     implementation("com.openai:openai-java:0.26.1")
     
     intellijPlatform {
