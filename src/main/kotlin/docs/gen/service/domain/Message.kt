@@ -1,11 +1,15 @@
 package docs.gen.service.domain
 
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 
-@Serializable
-@JsonIgnoreUnknownKeys
+enum class Role {
+    USER, ASSISTANT, SYSTEM;
+    
+    override fun toString(): String {
+        return name.lowercase()
+    }
+}
+
 data class Message(
-    val role: String, // "user", "assistant", or "system"
+    val role: Role,
     val content: String
 )

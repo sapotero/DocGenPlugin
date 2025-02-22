@@ -2,24 +2,18 @@ package docs.gen.service
 
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.logger
-import docs.gen.service.domain.ChatCompletionResponse
-import docs.gen.service.domain.ChatRequest
-import docs.gen.service.domain.OpenAiModelsResponse
+import com.intellij.openapi.diagnostic.thisLogger
+import com.openai.client.okhttp.OpenAIOkHttpClient
+import com.openai.models.ChatCompletionCreateParams
+import com.openai.models.ModelListParams
 import docs.gen.settings.PluginSettings
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import kotlinx.coroutines.runBlocking
+import kotlin.jvm.optionals.getOrNull
 
 @Service(Service.Level.APP)
 class OpenAiService {
-    
-    companion object {
-        private const val BASE_URL = "https://api.openai.com/v1"
-        private val log = logger<OpenAiService>()
-    }
-    
     private val settings = service<PluginSettings>().state
-    private val httpClient = HttpClientService()
+    private val openAIFactory = service<OpenAIFactory>()
     
     /**
      * Validates an API key by sending a HEAD request to a specified URL and checking the success status of the response.
@@ -32,8 +26,23 @@ class OpenAiService {
      * @throws HttpRequestException If there is an issue with the network or server during the request.
      * @throws InvalidApiKeyFormatException If the format of the API key is incorrect.
      */
-    fun validateApiKey(apiKey: String): Boolean =
-        httpClient.sendRequest("$BASE_URL/models", "HEAD", apiKey).isSuccess
+    fun validateApiKey(apiKey: String, providerHost: String) =
+        //TODO handle coroutine properly
+        runBlocking {
+            runCatching {
+                OpenAIOkHttpClient.builder()
+                    .baseUrl(providerHost)
+                    .apiKey(apiKey)
+                    .build()
+                    .models()
+                    .list(ModelListParams.builder().build())
+                    .data().isNotEmpty()
+            }.onFailure {
+                thisLogger().error(it)
+            }.getOrElse {
+                false
+            }
+        }
     
     /**
      * Fetches a list of available models from a remote server using HTTP GET, deserializes the JSON response, and extracts model identifiers.
@@ -53,12 +62,18 @@ class OpenAiService {
      * @throws HttpRequestException If there are issues with the network request like connectivity problems or timeouts.
      */
     fun fetchAvailableModels(): List<String> =
-        httpClient.sendRequest("$BASE_URL/models", "GET", settings.apiKey)
-            .mapCatching { Json.decodeFromString<OpenAiModelsResponse>(it).data.map { model -> model.id } }
-            .getOrElse {
-                log.error("Failed to fetch models: ${it.message}", it)
+        //TODO handle coroutine properly
+        runBlocking {
+            runCatching {
+                
+                openAIFactory.get()
+                    .models()
+                    .list(ModelListParams.builder().build())
+                    .data().map { it.id() }
+            }.getOrElse {
                 emptyList()
             }
+        }
     
     /**
      * Sends a chat request to the configured server using POST method, processes the response, and retrieves the chat completion message.
@@ -66,25 +81,22 @@ class OpenAiService {
      * performs the API call through an HTTP client, and attempts to decode the JSON response into a [ChatCompletionResponse].
      * If successful, it retrieves the first choice's message content. In case of any failures during the request or response handling,
      * the error is logged and the function returns null.
-    *
+     *
      * @param chatRequest The [ChatRequest] data object which contains all necessary information for the chat request.
      *                     This includes any parameters required by the chat API such as prompts, session tokens, etc.
      * @return The content of the first message choice from the chat completion response as a [String]? if present,
      *          or `null` if the request fails, if there is no message found, or if the response decoding fails.
      * @throws IllegalArgumentException If the API key in the settings is blank, this exception is thrown with a message.
-    */
-    fun sendRequest(chatRequest: ChatRequest): String? {
+     */
+    fun sendRequest(chatRequest: ChatCompletionCreateParams): String? {
         require(settings.apiKey.isNotBlank()) { "API Error: apiKey is blank" }
         
-        return httpClient.sendRequest(
-            uri = "$BASE_URL/chat/completions",
-            method = "POST",
-            apiKey = settings.apiKey,
-            body = Json.encodeToString(chatRequest)
-        ).mapCatching { Json.decodeFromString<ChatCompletionResponse>(it).choices.firstOrNull()?.message?.content }
-            .getOrElse {
-                log.error("Failed to send request: ${it.message}", it)
-                null
-            }
+        return runBlocking {
+            openAIFactory.get()
+                .chat()
+                .completions()
+                .create(chatRequest)
+                .choices().firstOrNull()?.message()?.content()?.getOrNull()
+        }
     }
 }

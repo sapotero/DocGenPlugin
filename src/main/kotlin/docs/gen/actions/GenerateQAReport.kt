@@ -7,8 +7,6 @@ import com.intellij.openapi.components.service
 import docs.gen.actions.experimental.AbstractAction
 import docs.gen.actions.experimental.ShakeResult
 import docs.gen.service.GPTService
-import docs.gen.settings.PluginSettings
-import docs.gen.settings.features.TreeShakingMode.DISABLED
 import docs.gen.utils.readAction
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtFile
@@ -16,13 +14,10 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 
 class GenerateQAReport : AbstractAction() {
     private val gptService = service<GPTService>()
-    private val settings = service<PluginSettings>().state
     
     override fun isEnabled(event: AnActionEvent): Boolean {
         val selectedElement = event.getData(CommonDataKeys.NAVIGATABLE)
-        val hasBody = (selectedElement as? KtDeclarationWithBody)?.hasBlockBody() == false
-        val isEnabled = settings.experimentalFeaturesEnabled && settings.treeShakingMode != DISABLED
-        return hasBody || isEnabled
+        return (selectedElement as? KtDeclarationWithBody)?.hasBlockBody() == false
     }
     
     override fun afterShake(event: AnActionEvent, rawData: String): ShakeResult {

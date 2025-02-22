@@ -1,20 +1,19 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
-import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.tasks.RunIdeTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.intelliJPlatform)
     alias(libs.plugins.changelog)
-    alias(libs.plugins.qodana)
-    alias(libs.plugins.kover)
-    kotlin("plugin.serialization") version "2.0.20"
+//    alias(libs.plugins.kover)
+//    kotlin("plugin.serialization") version "2.0.20"
 }
 
 group = "docs.gen"
-version = "1.0.5"
+version = "1.1.0"
 
 repositories {
     mavenCentral()
@@ -26,7 +25,7 @@ repositories {
 
 dependencies {
     implementation(libs.logback)
-    implementation(libs.serialize)
+    implementation("com.openai:openai-java:0.26.1")
     
     intellijPlatform {
         create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
@@ -35,7 +34,7 @@ dependencies {
         instrumentationTools()
         pluginVerifier()
         zipSigner()
-        testFramework(TestFrameworkType.Platform)
+//        testFramework(TestFrameworkType.Platform)
     }
     
     testImplementation(kotlin("test"))
@@ -46,14 +45,13 @@ intellijPlatform {
     instrumentCode = true
     projectName = project.name
     
-    
     pluginConfiguration {
         version = providers.gradleProperty("pluginVersion")
         
         description = providers.fileContents(layout.projectDirectory.file("README.md")).asText.map {
             val start = "<!-- Plugin description -->"
             val end = "<!-- Plugin description end -->"
-
+            
             with(it.lines()) {
                 if (!containsAll(listOf(start, end))) {
                     throw GradleException("Plugin description section not found in README.md:\n$start ... $end")
@@ -88,7 +86,8 @@ intellijPlatform {
     
     publishing {
         token = providers.environmentVariable("PUBLISH_TOKEN")
-        channels = providers.gradleProperty("pluginVersion").map { listOf(it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" }) }
+        channels = providers.gradleProperty("pluginVersion")
+            .map { listOf(it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" }) }
     }
     
     pluginVerification {
@@ -103,15 +102,15 @@ changelog {
     repositoryUrl = providers.gradleProperty("pluginRepositoryUrl")
 }
 
-kover {
-    reports {
-        total {
-            xml {
-                onCheck = true
-            }
-        }
-    }
-}
+//kover {
+//    reports {
+//        total {
+//            xml {
+//                onCheck = true
+//            }
+//        }
+//    }
+//}
 
 tasks {
     
@@ -119,7 +118,7 @@ tasks {
         sourceCompatibility = JvmTarget.JVM_17.target
         targetCompatibility = JvmTarget.JVM_17.target
     }
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    withType<KotlinCompile> {
         compilerOptions { jvmTarget.set(JvmTarget.JVM_17) }
     }
     
@@ -144,24 +143,24 @@ tasks.named<RunIdeTask>("runIde") {
     }
 }
 
-
-intellijPlatformTesting {
-    runIde {
-        register("runIdeForUiTests") {
-            task {
-                jvmArgumentProviders += CommandLineArgumentProvider {
-                    listOf(
-                        "-Drobot-server.port=8082",
-                        "-Dide.mac.message.dialogs.as.sheets=false",
-                        "-Djb.privacy.policy.text=<!--999.999-->",
-                        "-Djb.consents.confirmation.enabled=false",
-                    )
-                }
-            }
-            
-            plugins {
-                robotServerPlugin()
-            }
-        }
-    }
-}
+//
+//intellijPlatformTesting {
+//    runIde {
+//        register("runIdeForUiTests") {
+//            task {
+//                jvmArgumentProviders += CommandLineArgumentProvider {
+//                    listOf(
+//                        "-Drobot-server.port=8082",
+//                        "-Dide.mac.message.dialogs.as.sheets=false",
+//                        "-Djb.privacy.policy.text=<!--999.999-->",
+//                        "-Djb.consents.confirmation.enabled=false",
+//                    )
+//                }
+//            }
+//
+//            plugins {
+//                robotServerPlugin()
+//            }
+//        }
+//    }
+//}

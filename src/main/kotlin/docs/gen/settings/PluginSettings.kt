@@ -4,7 +4,7 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
-import docs.gen.settings.features.TreeShakingMode
+import docs.gen.settings.features.OpenApiProvider
 
 @State(
     name = "KDocGenPluginSettings",
@@ -21,9 +21,16 @@ class PluginSettings : PersistentStateComponent<PluginSettings.State> {
         var apiKey: String = "",
         var selectedModel: String = "",
         var availableModels: List<String> = mutableListOf(),
-        var experimentalFeaturesEnabled: Boolean = false,
-        var treeShakingMode: TreeShakingMode = TreeShakingMode.DISABLED,
-    )
+        var selectedProvider: OpenApiProvider = OpenApiProvider.OpenAI,
+        var customProviderUrl: String? = null,
+    ) {
+        val providerHost: String
+            get() =
+                when (selectedProvider) {
+                    OpenApiProvider.Custom -> customProviderUrl.orEmpty()
+                    else -> selectedProvider.host
+                }
+    }
     
     private var _state = State()
     

@@ -9,7 +9,6 @@ import com.intellij.openapi.ui.Messages
 import docs.gen.core.RecursiveTreeVisitor
 import docs.gen.service.GPTService
 import docs.gen.settings.PluginSettings
-import docs.gen.settings.features.TreeShakingMode.DISABLED
 import docs.gen.utils.invokeLater
 import docs.gen.utils.openScratchFile
 import docs.gen.utils.readAction
@@ -25,8 +24,7 @@ class RecursiveShakeTreeAction : AnAction() {
     override fun update(event: AnActionEvent) {
         val selectedElement = event.getData(CommonDataKeys.NAVIGATABLE)
         val isVisible = selectedElement is KtNamedFunction
-        val isEnabled = settings.experimentalFeaturesEnabled && settings.treeShakingMode != DISABLED
-        event.presentation.isEnabledAndVisible = isEnabled && isVisible && !isK2Enabled()
+        event.presentation.isEnabledAndVisible = isVisible && !isK2Enabled()
     }
     
     override fun actionPerformed(event: AnActionEvent) {

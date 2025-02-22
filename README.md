@@ -1,8 +1,6 @@
 <!-- Plugin description -->
 # KDocGen: Code & Documentation Generator
 
-[🇬🇧 English Version](#) | [🇨🇳 Chinese Version](#)
-
 ## 🛠️ Overview
 
 KDocGen is a powerful IntelliJ IDEA plugin designed to streamline **code generation** and **documentation creation** for
@@ -36,7 +34,8 @@ Stay productive, write better code, and let KDocGen handle the rest! 🚀
 - 🔹 **Generate Kotest tests**: Instantly create Kotest test files for selected functions.
 - 🔹 **Generate QA reports**: Analyze functions and generate detailed reports.
 - 🔹 **Seamless integration**: Works effortlessly within IntelliJ IDEA using a single shortcut.
-
+- 🔹 **Provider Selection**: Added support for selecting API providers including `OpenAI`, `Azure`, `Google Gemini`,
+  `Hugging Face`, `Mistral AI`, `Groq`, `Perplexity AI`, and a **Custom option.**
 ---
 
 ## 🛠️ Installation
