@@ -126,6 +126,7 @@ class ConfigurablePluginSettings : Configurable {
                 if (isValid) {
                     settings.apiKey = apiKey
                     Messages.showInfoMessage(panel, "API Key is valid!", "Success")
+                    apply()
                     loadAvailableModels()
                 } else {
                     setLoading(false)

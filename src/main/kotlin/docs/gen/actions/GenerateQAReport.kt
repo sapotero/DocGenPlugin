@@ -8,6 +8,7 @@ import docs.gen.actions.experimental.AbstractAction
 import docs.gen.actions.experimental.ShakeResult
 import docs.gen.service.GPTService
 import docs.gen.utils.readAction
+import docs.gen.utils.removeThinkBlocks
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -39,7 +40,7 @@ class GenerateQAReport : AbstractAction() {
     
     override fun onSuccess(event: AnActionEvent, result: ShakeResult) {
         val psiFile = event.getData(CommonDataKeys.PSI_FILE) as? KtFile ?: return
-        openScratchFile("${psiFile.name}.${result.fileFormat}", result.code, event.project!!)
+        openScratchFile("${psiFile.name}.${result.fileFormat}", result.code.removeThinkBlocks(), event.project!!)
     }
     
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT

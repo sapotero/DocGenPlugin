@@ -22,7 +22,7 @@ class GenerateKotestFileAction : AbstractAction() {
     
     override fun afterShake(event: AnActionEvent, rawData: String) =
         ShakeResult(
-            code = gptService.generateTreeSaknKotestTests(rawData).toString(),
+            code = gptService.generateTest(rawData).toString(),
             fileFormat = "kt",
             removeCodeLines = true
         )

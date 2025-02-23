@@ -37,48 +37,6 @@ class GPTService {
             )
         )
             .execute()
-//            model = ModelId(),
-//            messages = listOf(
-//                ChatMessage(
-//                    role = ChatRole.System,
-//                    content = "Generate a function comment with detailed documentation in the style of KDoc for Kotlin for the following function in Main class;" +
-//                        "Please include the purpose of the function, parameters with descriptions, the return type with a description, and any possible exceptions thrown." +
-//                        "Be specific about each part of the documentation. Return only comment block without any markdown markup"
-//                ),
-//                ChatMessage(role = ChatRole.User, content = function)
-//            )
-//        ).execute()
-    
-    
-    /**
-     * Generates a test case template for a given Kotlin function using the Kotest BehaviorSpec style.
-     * This function specifically prepares a chat request to simulate a conversation where the function
-     * description is processed to create an appropriate test structure.
-     *
-     * @param function a string that contains the Kotlin function for which the test case needs to be generated.
-     *        This string should include the function's signature and its body.
-     *
-     * @return a ChatCompletionRequest object set up to execute the testing assistant simulation, which upon execution,
-     *         should yield a test structure. The returned ChatCompletionRequest contains messages that direct the testing
-     *         assistant to generate the test structure based on the provided function.
-     *
-     * @throws IllegalArgumentException if the function parameter is an empty string or not properly formatted as
-     *         a valid Kotlin function definition, which is necessary for the test generation simulation to work correctly.
-     */
-    fun generateTestCase(function: String) =
-        ChatRequest(
-            model = settings.selectedModel,
-            messages = listOf(
-                Message(
-                    role = Role.SYSTEM,
-                    content = "You are an expert Kotlin developer and testing assistant." +
-                        " Given a Kotlin function, generate only the corresponding Kotest test structure using the BehaviorSpec style." +
-                        " The output should contain only empty given-when-then blocks with meaningful and precise naming based on the function’s logic." +
-                        " Do not include explanations, comments, markdown-markup or any extra text—just the raw test structure."
-                ),
-                Message(role = Role.USER, content = function)
-            )
-        ).execute()
     
     /**
      *  This function named 'describeSelection' uses the input string and the current selected model
@@ -145,7 +103,7 @@ class GPTService {
         ).execute()
     
     
-    fun generateTreeSaknKotestTests(callTree: String, addExampleImplementation: Boolean = false) =
+    fun generateTest(callTree: String, addExampleImplementation: Boolean = false) =
         ChatRequest(
             model = settings.selectedModel,
             messages = listOf(
@@ -173,6 +131,7 @@ class GPTService {
                         "- All given-when-then blocks must be empty, but contain verbose valid name".includeIf(!addExampleImplementation)
                     }
                     
+                    Do not include any explanations, comments, or additional text.
                     
                     Expected Output:
                     - A valid Kotest test class with `BehaviorSpec` style.

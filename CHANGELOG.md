@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.1] - 2025-02-23
+
+### Added
+
+- Fix integration
+
 ## [1.1.0] - 2025-02-22
 
 ### Added
