@@ -61,5 +61,15 @@
             <add-to-group group-id="GenerateGroup"
                           relative-to-action="org.intellij.sdk.action.GenerateKotestFileAction" anchor="after"/>
         </action>
+
+        <action
+                id="docs.gen.actions.InlineSearchAction"
+                class="docs.gen.actions.InlineSearchAction"
+                text="Test Inlay"
+                description="Test">
+            <add-to-group group-id="GenerateGroup"
+                          relative-to-action="org.intellij.sdk.action.ShakeTreeAction" anchor="after"/>
+        </action>
+
     </actions>
 </idea-plugin>
