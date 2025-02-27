@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.2] - 2025-02-27
+
+### Added
+
+- Add enhance dialog
+
 ## [1.1.1] - 2025-02-23
 
 ### Added

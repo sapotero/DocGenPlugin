@@ -2,6 +2,7 @@ package docs.gen.service
 
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.fileTypes.FileType
 import com.openai.models.ChatCompletionCreateParams
 import docs.gen.service.domain.ChatRequest
 import docs.gen.service.domain.Message
@@ -102,6 +103,29 @@ class GPTService {
             )
         ).execute()
     
+    fun enhance(query: String, request: String, fileType: FileType) =
+        ChatRequest(
+            model = settings.selectedModel,
+            messages = listOf(
+                Message(
+                    role = Role.SYSTEM,
+                    content = """
+                        You are an expert developer. The request text is `${fileType.name}`
+                        Given the following `query`, make update on `request` text and return result.
+                        The implementation should follow best practices, be idiomatic, and ensure correctness.
+                        Do not include excessive explanations what happened.
+                        Do not modify any other part of the code.
+                    """.trimIndent()
+                ),
+                Message(
+                    role = Role.USER,
+                    content = mapOf(
+                        "query" to query,
+                        "request" to request
+                    ).toString()
+                )
+            )
+        ).execute()
     
     fun generateTest(callTree: String, addExampleImplementation: Boolean = false) =
         ChatRequest(
